@@ -50,7 +50,18 @@ Follow these steps to verify all authentication and authorization features.
 
 ---
 
-## 4. Role-Based Access Control (Admin Only)
+## 4. Access Dashboard (Students & Admins)
+**Endpoint:** `GET /dashboard`  
+**Description:** Verifies access for all authenticated users.
+
+**Header:** 
+- `Authorization`: `Bearer <YOUR_ACCESS_TOKEN>`
+
+**Expected Response:** `200 OK`.
+
+---
+
+## 5. Role-Based Access Control (Admin Only)
 **Endpoint:** `GET /admin`  
 **Description:** Tests restriction for non-admin users.
 
@@ -61,7 +72,7 @@ Follow these steps to verify all authentication and authorization features.
 
 ---
 
-## 5. Token Refresh
+## 6. Token Refresh
 **Endpoint:** `POST /refresh`  
 **Description:** Uses the Refresh Token to generate a new Access Token.
 
@@ -75,7 +86,7 @@ Follow these steps to verify all authentication and authorization features.
 
 ---
 
-## 6. Logout & Token Invalidation
+## 7. Logout & Token Invalidation
 **Endpoint:** `POST /logout`  
 **Description:** Blacklists the current token and clears cookies.
 
@@ -92,11 +103,19 @@ Follow these steps to verify all authentication and authorization features.
 
 ---
 
-## 7. Verify Invalidation
-**Endpoint:** `GET /profile`  
-**Description:** Ensures the blacklisted token can no longer be used.
+## 8. Error Case Testing (Verify 400/401/403)
 
-**Header:** 
-- `Authorization`: `Bearer <THE_SAME_TOKEN_USED_IN_STEP_6>`
+### A. Missing Body (400 Bad Request)
+- **Endpoint:** `POST /login`
+- **Body:** `{}` (Empty object)
+- **Expected:** `400 Bad Request` ("Username and password are required")
 
-**Expected Response:** `403 Forbidden` ("Token has been invalidated.")
+### B. Missing Token (401 Unauthorized)
+- **Endpoint:** `GET /profile`
+- **Headers:** Remove Authorization header.
+- **Expected:** `401 Unauthorized` ("Access token is missing")
+
+### C. Blacklisted Token (403 Forbidden)
+- **Endpoint:** `GET /profile`
+- **Header:** Use the token from Step 7 (after logout).
+- **Expected:** `403 Forbidden` ("Token has been invalidated")
